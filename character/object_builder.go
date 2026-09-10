@@ -1,100 +1,58 @@
 package character
 
-import "errors"
-
 type GameCharacterBuilder struct {
-	name      string
-	charClass CharacterClass
-	level     int
-	weapon    string
-	armor     string
-	abilities []string
+	data characterData
 }
 
 func NewGameCharacterBuilder() *GameCharacterBuilder {
 	return &GameCharacterBuilder{
-		abilities: make([]string, 0),
+		data: characterData{
+			abilities: make([]string, 0),
+		},
 	}
 }
 
 func (b *GameCharacterBuilder) SetName(name string) CharacterBuilder {
-	b.name = name
+	b.data.name = name
 	return b
 }
 
 func (b *GameCharacterBuilder) SetClass(charClass CharacterClass) CharacterBuilder {
-	b.charClass = charClass
+	b.data.charClass = charClass
 	return b
 }
 
 func (b *GameCharacterBuilder) SetLevel(level int) CharacterBuilder {
-	b.level = level
+	b.data.level = level
 	return b
 }
 
 func (b *GameCharacterBuilder) SetWeapon(weapon string) CharacterBuilder {
-	b.weapon = weapon
+	b.data.weapon = weapon
 	return b
 }
 
 func (b *GameCharacterBuilder) SetArmor(armor string) CharacterBuilder {
-	b.armor = armor
+	b.data.armor = armor
 	return b
 }
 
 func (b *GameCharacterBuilder) AddAbility(ability string) CharacterBuilder {
-	b.abilities = append(b.abilities, ability)
+	b.data.abilities = append(b.data.abilities, ability)
 	return b
 }
 
 func (b *GameCharacterBuilder) GetResult() (GameCharacter, error) {
-	if err := b.validate(); err != nil {
+	if err := validateCharacter(b.data); err != nil {
 		return GameCharacter{}, err
 	}
 
 	return newGameCharacter(
-		b.name,
-		b.charClass,
-		b.level,
-		b.weapon,
-		b.armor,
-		b.abilities,
+		b.data.name,
+		b.data.charClass,
+		b.data.level,
+		b.data.weapon,
+		b.data.armor,
+		b.data.abilities,
 	), nil
-}
-
-func (b *GameCharacterBuilder) validate() error {
-	if b.name == "" {
-		return errors.New("character name is required")
-	}
-
-	if !isValidClass(b.charClass) {
-		return errors.New("character class must be Warrior, Mage, or Villain")
-	}
-
-	if b.level < MinLevel || b.level > MaxLevel {
-		return errors.New("character level must be between 1 and 100")
-	}
-
-	if b.weapon == "" {
-		return errors.New("weapon is required")
-	}
-
-	if b.armor == "" {
-		return errors.New("armor is required")
-	}
-
-	if len(b.abilities) == 0 {
-		return errors.New("at least one ability is required")
-	}
-
-	return nil
-}
-
-func isValidClass(charClass CharacterClass) bool {
-	switch charClass {
-	case Warrior, Mage, Villain:
-		return true
-	default:
-		return false
-	}
 }

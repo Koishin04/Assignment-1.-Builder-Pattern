@@ -10,50 +10,61 @@ import (
 func main() {
 	director := character.NewCharacterDirector()
 
-	objectBuilder := character.NewGameCharacterBuilder()
+	fmt.Println("=== BUILDER PATTERN: GAME CHARACTER ===")
+	fmt.Println()
 
-	director.MakeWarrior(objectBuilder)
+	demonstrateObjectBuilder(director)
+	fmt.Println()
 
-	warrior, err := objectBuilder.GetResult()
+	demonstrateJSONBuilder(director)
+	fmt.Println()
+
+	demonstrateDifferentConfigurations(director)
+}
+
+func demonstrateObjectBuilder(director *character.CharacterDirector) {
+	builder := character.NewGameCharacterBuilder()
+
+	director.MakeWarrior(builder)
+
+	warrior, err := builder.GetResult()
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	fmt.Println("=== GameCharacter Object ===")
+	fmt.Println("--- GameCharacter Object ---")
 	fmt.Println("Name:", warrior.Name())
 	fmt.Println("Class:", warrior.Class())
 	fmt.Println("Level:", warrior.Level())
 	fmt.Println("Weapon:", warrior.Weapon())
 	fmt.Println("Armor:", warrior.Armor())
 	fmt.Println("Abilities:", warrior.Abilities())
+}
 
-	fmt.Println()
+func demonstrateJSONBuilder(director *character.CharacterDirector) {
+	builder := character.NewJSONCharacterBuilder()
 
-	
-	jsonBuilder := character.NewJSONCharacterBuilder()
+	director.MakeWarrior(builder)
 
-	director.MakeWarrior(jsonBuilder)
-
-	warriorJSON, err := jsonBuilder.GetResult()
+	warriorJSON, err := builder.GetResult()
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	fmt.Println("=== JSON Representation ===")
+	fmt.Println("--- JSON Representation ---")
 	fmt.Println(warriorJSON)
+}
 
-	fmt.Println()
+func demonstrateDifferentConfigurations(director *character.CharacterDirector) {
+	objectBuilder := character.NewGameCharacterBuilder()
+	director.MakeMage(objectBuilder)
 
-	mageBuilder := character.NewGameCharacterBuilder()
-
-	director.MakeMage(mageBuilder)
-
-	mage, err := mageBuilder.GetResult()
+	mage, err := objectBuilder.GetResult()
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	fmt.Println("=== Mage ===")
+	fmt.Println("--- Mage Configuration ---")
 	fmt.Println("Name:", mage.Name())
 	fmt.Println("Class:", mage.Class())
 	fmt.Println("Level:", mage.Level())
@@ -61,18 +72,15 @@ func main() {
 	fmt.Println("Armor:", mage.Armor())
 	fmt.Println("Abilities:", mage.Abilities())
 
-	fmt.Println()
+	jsonBuilder := character.NewJSONCharacterBuilder()
+	director.MakeVillain(jsonBuilder)
 
-	
-	villainBuilder := character.NewJSONCharacterBuilder()
-
-	director.MakeVillain(villainBuilder)
-
-	villainJSON, err := villainBuilder.GetResult()
+	villainJSON, err := jsonBuilder.GetResult()
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	fmt.Println("=== Villain JSON ===")
+	fmt.Println()
+	fmt.Println("--- Villain JSON Representation ---")
 	fmt.Println(villainJSON)
 }
